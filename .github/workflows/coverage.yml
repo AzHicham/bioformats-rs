@@ -1,0 +1,47 @@
+name: Coverage
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - develop
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_VERSION: 1.75.0
+
+jobs:
+  coverage:
+    runs-on: ubuntu-22.04
+    env:
+      J4RS_CONSOLE_LOG_LEVEL: warn
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: make install-deps-ubuntu
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+      - name: Cache sample slide
+        id: cache-slide
+        uses: actions/cache@v4
+        with:
+          path: tests/assets/
+          key: slides-test
+      - name: Download sample tests data
+        if: steps.cache-slide.outputs.cache-hit != 'true'
+        run: make dl-test-images
+      - name: Install llvm-cov & Build & Tests
+        run: |
+          rustup component add llvm-tools-preview
+          cargo install cargo-llvm-cov
+          cargo llvm-cov clean --workspace # remove artifacts that may affect the coverage results
+          cargo llvm-cov --no-report --workspace --all-features
+          cargo llvm-cov --no-run --workspace --lcov --output-path lcov.info
+      - uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: lcov.info
+          name: codecov-bioformats-rs # optional
+          verbose: true # optional (default = false)
