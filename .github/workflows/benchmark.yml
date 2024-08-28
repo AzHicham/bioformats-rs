@@ -6,9 +6,6 @@ on:
       - main
       - develop
   pull_request:
-    branches:
-      - main
-      - develop
 
 env:
   CARGO_TERM_COLOR: always
@@ -36,17 +33,17 @@ jobs:
       - name: Run cargo bench
         run: cargo bench --workspace --all-features | tee bench-output.txt
       - name: Store benchmark result
-        uses: rhysd/github-action-benchmark@v1
+        uses: benchmark-action/github-action-benchmark@v1
         with:
           name: bioformats-rs Benchmark
           tool: 'cargo'
           save-data-file: ${{ github.event_name == 'push' }}
-          auto-push: ${{ github.event_name == 'push' }}
           output-file-path: bench-output.txt
           benchmark-data-dir-path: '.'
           max-items-in-chart: 30
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          alert-threshold: '200%'
+          auto-push: ${{ github.event_name == 'push' }}
+          alert-threshold: '125%'
           comment-on-alert: true
           fail-on-alert: true
           comment-always: true
