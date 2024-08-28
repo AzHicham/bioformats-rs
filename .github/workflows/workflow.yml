@@ -46,12 +46,13 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           key: ${{ matrix.os }}-${{ matrix.build }}-${{ matrix.feature }}
+      - name: Cargo clean (Tmp) # Fix issue on MacOs & release build
+        if: ${{ contains(matrix.os, 'macos') && contains(matrix.build, 'release') }}
+        run: cargo clean
       - name: Install dependencies
         run: make ${{ env.INSTALL_DEPS_CMD }}
       - name: Build & Test
         run: cargo test --workspace ${{ matrix.build }} ${{ matrix.feature }}
-      - name: Clean jassets directory # Fix issue on MacOs & release build
-        run: rm -rf target/*/jassets
 
   doc-rs:
     runs-on: ubuntu-22.04
