@@ -25,7 +25,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --all --fix --all-targets --allow-dirty
+          args: --all-features --all --fix --all-targets --allow-dirty
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
         with:
