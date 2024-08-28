@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+  pull_request:
   pull_request_target:
     branches:
       - main
@@ -34,7 +35,7 @@ jobs:
         with:
           key: ubuntu-benchmark
       - name: Run cargo bench
-        run: cargo bench --workspace | tee bench-output.txt
+        run: cargo bench --workspace --all-features | tee bench-output.txt
       - name: Store benchmark result
         uses: rhysd/github-action-benchmark@v1
         with:
