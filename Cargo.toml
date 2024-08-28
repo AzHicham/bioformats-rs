@@ -1,6 +1,6 @@
 [package]
 name = "bioformats-rs"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 authors = ["AzHicham <hicham.azimani1@gmail.com>"]
 description = "Rust bindings of Bioformats Java library"
