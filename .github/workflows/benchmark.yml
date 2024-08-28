@@ -1,0 +1,54 @@
+name: Benchmarks
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request_target:
+    branches:
+      - main
+      - develop
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_VERSION: 1.75.0
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  benchmarks:
+    runs-on: ubuntu-22.04
+    env:
+      J4RS_CONSOLE_LOG_LEVEL: warn
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: make install-deps-ubuntu
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ubuntu-benchmark
+      - name: Run cargo bench
+        run: cargo bench --workspace | tee bench-output.txt
+      - name: Store benchmark result
+        uses: rhysd/github-action-benchmark@v1
+        with:
+          name: bioformats-rs Benchmark
+          tool: 'cargo'
+          save-data-file: ${{ github.event_name == 'push' }}
+          auto-push: ${{ github.event_name == 'push' }}
+          output-file-path: bench-output.txt
+          benchmark-data-dir-path: '.'
+          max-items-in-chart: 30
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          alert-threshold: '200%'
+          comment-on-alert: true
+          fail-on-alert: true
+          comment-always: true
+          summary-always: true
+          alert-comment-cc-users: '@AzHicham'

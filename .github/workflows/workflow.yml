@@ -1,0 +1,88 @@
+name: Build and test
+
+on:
+  schedule:
+    - cron: "0 0 * * 1,5"
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_VERSION: 1.75.0
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-22.04", "macos-14"]
+        feature: ["--all-features", ""]
+        build: ["--release", ""]
+
+    env:
+      INSTALL_DEPS_CMD: install-deps-${{ contains(matrix.os, 'ubuntu') && 'ubuntu' || 'macos' }}
+      J4RS_CONSOLE_LOG_LEVEL: warn
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          components: clippy, rustfmt
+      - name: Cache sample slide
+        id: cache-slide
+        uses: actions/cache@v4
+        with:
+          path: tests/assets/
+          key: slides-test
+      - name: Download sample tests data
+        if: steps.cache-slide.outputs.cache-hit != 'true'
+        run: make dl-test-images
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.os }}-${{ matrix.build }}-${{ matrix.feature }}
+      - name: Install dependencies
+        run: make ${{ env.INSTALL_DEPS_CMD }}
+      - name: Build & Test
+        run: cargo test --workspace ${{ matrix.build }} ${{ matrix.feature }}
+      - name: Clean jassets directory # Fix issue on MacOs & release build
+        run: rm -rf target/*/jassets
+
+  doc-rs:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          components: clippy, rustfmt
+      - name: Install dependencies ubuntu
+        run: make install-deps-ubuntu
+      - name: Generate Doc
+        env:
+          DOCS_RS: 1
+        run: cargo doc -v
+
+  pre-commit:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          override: true
+          components: rustfmt, clippy
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Pre-commit
+        run: |
+          pre-commit install --install-hooks
+          pre-commit run --all --show-diff-on-failure
