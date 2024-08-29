@@ -1,5 +1,5 @@
 use super::format::{FormatReader, ReaderInstance};
-use crate::bindings::error::BioformatsBindingError;
+use crate::bindings::error::BindingError;
 use j4rs::{Instance, InvocationArg, Jvm};
 use std::{borrow::Borrow, time::Duration};
 
@@ -49,7 +49,7 @@ impl<J: Borrow<Jvm>> MemoizerBuilder<J> {
     }
 
     /// Build the Memoizer
-    pub fn build(self) -> Result<Memoizer<J>, BioformatsBindingError> {
+    pub fn build(self) -> Result<Memoizer<J>, BindingError> {
         let jvm = self.jvm.borrow();
 
         let mut args = vec![];

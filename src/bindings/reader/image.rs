@@ -1,5 +1,5 @@
 use super::format::{FormatReader, ReaderInstance};
-use crate::bindings::error::BioformatsBindingError;
+use crate::bindings::error::BindingError;
 use j4rs::{Instance, InvocationArg, Jvm};
 use std::borrow::Borrow;
 
@@ -12,7 +12,7 @@ pub struct ImageReader<J: Borrow<Jvm>> {
 }
 
 impl<J: Borrow<Jvm>> ImageReader<J> {
-    pub fn new(jvm: J) -> Result<Self, BioformatsBindingError> {
+    pub fn new(jvm: J) -> Result<Self, BindingError> {
         let inner = jvm
             .borrow()
             .create_instance("loci.formats.ImageReader", InvocationArg::empty())?;

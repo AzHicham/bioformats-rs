@@ -1,4 +1,4 @@
-use crate::bindings::error::BioformatsBindingError;
+use crate::bindings::error::BindingError;
 use j4rs::{InvocationArg, Jvm};
 use std::borrow::Borrow;
 
@@ -11,7 +11,7 @@ impl<J: Borrow<Jvm>> DebugTool<J> {
         Self { jvm }
     }
 
-    pub fn set_root_level(&self, level: &str) -> Result<(), BioformatsBindingError> {
+    pub fn set_root_level(&self, level: &str) -> Result<(), BindingError> {
         let jvm = self.jvm.borrow();
         jvm.invoke_static(
             "loci.common.DebugTools",
@@ -21,7 +21,7 @@ impl<J: Borrow<Jvm>> DebugTool<J> {
         Ok(())
     }
 
-    pub fn is_enabled(&self) -> Result<bool, BioformatsBindingError> {
+    pub fn is_enabled(&self) -> Result<bool, BindingError> {
         let jvm = self.jvm.borrow();
         let res = jvm.invoke_static(
             "loci.common.DebugTools",
@@ -31,7 +31,7 @@ impl<J: Borrow<Jvm>> DebugTool<J> {
         Ok(jvm.to_rust(res)?)
     }
 
-    pub fn enable_logging(&self) -> Result<(), BioformatsBindingError> {
+    pub fn enable_logging(&self) -> Result<(), BindingError> {
         let jvm = self.jvm.borrow();
         jvm.invoke_static(
             "loci.common.DebugTools",
@@ -41,7 +41,7 @@ impl<J: Borrow<Jvm>> DebugTool<J> {
         Ok(())
     }
 
-    pub fn enable_logging_level(&self, level: &str) -> Result<(), BioformatsBindingError> {
+    pub fn enable_logging_level(&self, level: &str) -> Result<(), BindingError> {
         let jvm = self.jvm.borrow();
         jvm.invoke_static(
             "loci.common.DebugTools",
@@ -51,7 +51,7 @@ impl<J: Borrow<Jvm>> DebugTool<J> {
         Ok(())
     }
 
-    pub fn enable_ij_logging(&self, debug: bool) -> Result<(), BioformatsBindingError> {
+    pub fn enable_ij_logging(&self, debug: bool) -> Result<(), BindingError> {
         let jvm = self.jvm.borrow();
         jvm.invoke_static(
             "loci.common.DebugTools",

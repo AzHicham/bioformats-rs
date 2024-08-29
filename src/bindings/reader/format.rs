@@ -1,4 +1,7 @@
-use crate::bindings::error::BioformatsBindingError;
+use crate::bindings::{
+    error::BindingError,
+    metadata::{Metadata, OmeXmlMetadata},
+};
 use j4rs::{Instance, InvocationArg, Jvm};
 use std::borrow::Borrow;
 
@@ -13,7 +16,7 @@ pub trait ReaderInstance {
 /// It is the equivalent of the `loci.formats.IFormatReader` interface in Java.
 pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     /// Sets the current file name to be opened
-    fn set_id<T: AsRef<str>>(&self, filename: T) -> Result<(), BioformatsBindingError> {
+    fn set_id<T: AsRef<str>>(&self, filename: T) -> Result<(), BindingError> {
         let jvm = self.borrow();
         jvm.invoke(
             self.instance_ref(),
@@ -24,7 +27,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Return whether resolution flattening is enabled.
-    fn has_flattened_resolutions(&self) -> Result<bool, BioformatsBindingError> {
+    fn has_flattened_resolutions(&self) -> Result<bool, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(
             self.instance_ref(),
@@ -37,7 +40,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     /// Gets the number of channels returned with each call to openBytes.
     /// The most common case where this value is greater than 1 is for interleaved RGB data, such as a 24-bit color image plane.
     /// However, it is possible for this value to be greater than 1 for non-interleaved data, such as an RGB TIFF with Planar rather than Chunky configuration.
-    fn get_rgb_channel_count(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_rgb_channel_count(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(
             self.instance_ref(),
@@ -48,14 +51,14 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Gets whether the channels are interleaved.
-    fn is_interleaved(&self) -> Result<bool, BioformatsBindingError> {
+    fn is_interleaved(&self) -> Result<bool, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "isInterleaved", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
     }
 
     /// Gets whether the data is in little-endian format
-    fn is_little_endian(&self) -> Result<bool, BioformatsBindingError> {
+    fn is_little_endian(&self) -> Result<bool, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(
             self.instance_ref(),
@@ -66,7 +69,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Returns the optimal sub-image width for use with openBytes
-    fn get_optimal_tile_width(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_optimal_tile_width(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(
             self.instance_ref(),
@@ -77,7 +80,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Returns the optimal sub-image height for use with openBytes
-    fn get_optimal_tile_height(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_optimal_tile_height(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(
             self.instance_ref(),
@@ -88,7 +91,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Gets the pixel type
-    fn get_pixel_type(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_pixel_type(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "getPixelType", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
@@ -96,7 +99,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
 
     /// Gets a five-character string representing the dimension order in which planes will be returned
     /// Example: XYCZT
-    fn get_dimension_order(&self) -> Result<String, BioformatsBindingError> {
+    fn get_dimension_order(&self) -> Result<String, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(
             self.instance_ref(),
@@ -107,28 +110,28 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Gets the name of this file format
-    fn get_format(&self) -> Result<String, BioformatsBindingError> {
+    fn get_format(&self) -> Result<String, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "getFormat", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
     }
 
     /// Determines the number of image planes in the current file.
-    fn get_image_count(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_image_count(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "getImageCount", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
     }
 
     /// Get the current resolution level
-    fn get_resolution(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_resolution(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "getResolution", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
     }
 
     /// Gets the currently active series
-    fn get_series(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_series(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "getSeries", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
@@ -136,7 +139,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
 
     /// Return the number of resolutions for the current series.
     /// Resolutions are stored in descending order, so the largest resolution is first and the smallest resolution is last.
-    fn get_resolution_count(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_resolution_count(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(
             self.instance_ref(),
@@ -147,7 +150,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Gets the number of series in this file.
-    fn get_series_count(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_series_count(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(
             self.instance_ref(),
@@ -158,56 +161,56 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Gets the size of the X dimension.
-    fn get_size_x(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_size_x(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "getSizeX", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
     }
 
     /// Gets the size of the Y dimension.
-    fn get_size_y(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_size_y(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "getSizeY", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
     }
 
     /// Gets the size of the Z dimension.
-    fn get_size_z(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_size_z(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "getSizeZ", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
     }
 
     /// Gets the size of the C/Channel dimension.
-    fn get_size_c(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_size_c(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "getSizeC", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
     }
 
     /// Gets the size of the T/Time dimension.
-    fn get_size_t(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_size_t(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "getSizeT", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
     }
 
     /// Get the size of the X dimension for the thumbnail
-    fn get_thumb_size_x(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_thumb_size_x(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "getThumbSizeX", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
     }
 
     /// Get the size of the Y dimension for the thumbnail
-    fn get_thumb_size_y(&self) -> Result<i32, BioformatsBindingError> {
+    fn get_thumb_size_y(&self) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "getThumbSizeY", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
     }
 
     /// Gets whether the image planes are indexed color.
-    fn is_indexed(&self) -> Result<bool, BioformatsBindingError> {
+    fn is_indexed(&self) -> Result<bool, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "isIndexed", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
@@ -215,14 +218,14 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
 
     /// Checks if the image planes in the file have more than one channel per `open_bytes` call.
     /// This method returns true if and only if getRGBChannelCount() returns a value greater than 1.
-    fn is_rgb(&self) -> Result<bool, BioformatsBindingError> {
+    fn is_rgb(&self) -> Result<bool, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(self.instance_ref(), "isRGB", InvocationArg::empty())?;
         Ok(jvm.to_rust(res)?)
     }
 
     /// Gets whether the current series is a lower resolution copy of a different series
-    fn is_thumbnail_series(&self) -> Result<bool, BioformatsBindingError> {
+    fn is_thumbnail_series(&self) -> Result<bool, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(
             self.instance_ref(),
@@ -233,7 +236,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Gets the rasterized index corresponding to the given Z, C and T coordinates (real sizes).
-    fn get_index(&self, z: i32, c: i32, t: i32) -> Result<i32, BioformatsBindingError> {
+    fn get_index(&self, z: i32, c: i32, t: i32) -> Result<i32, BindingError> {
         let jvm = self.borrow();
         let res = jvm.invoke(
             self.instance_ref(),
@@ -248,14 +251,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Obtains a sub-image of the specified image plane into a pre-allocated byte array.
-    fn open_bytes(
-        &self,
-        no: i32,
-        x: i32,
-        y: i32,
-        w: i32,
-        h: i32,
-    ) -> Result<Vec<i8>, BioformatsBindingError> {
+    fn open_bytes(&self, no: i32, x: i32, y: i32, w: i32, h: i32) -> Result<Vec<i8>, BindingError> {
         let jvm = self.borrow();
 
         let res = jvm.invoke(
@@ -273,7 +269,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Set whether or not to flatten resolutions into individual series.
-    fn set_flattened_resolutions(&self, flattened: bool) -> Result<(), BioformatsBindingError> {
+    fn set_flattened_resolutions(&self, flattened: bool) -> Result<(), BindingError> {
         let jvm = self.borrow();
         jvm.invoke(
             self.instance_ref(),
@@ -284,7 +280,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Activates the specified series
-    fn set_series(&self, series: i32) -> Result<(), BioformatsBindingError> {
+    fn set_series(&self, series: i32) -> Result<(), BindingError> {
         let jvm = self.borrow();
         jvm.invoke(
             self.instance_ref(),
@@ -295,7 +291,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Set the resolution level.
-    fn set_resolution(&self, resolution: i32) -> Result<(), BioformatsBindingError> {
+    fn set_resolution(&self, resolution: i32) -> Result<(), BindingError> {
         let jvm = self.borrow();
         jvm.invoke(
             self.instance_ref(),
@@ -306,7 +302,7 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
     }
 
     /// Closes the currently open file.
-    fn close(&self, file_only: bool) -> Result<(), BioformatsBindingError> {
+    fn close(&self, file_only: bool) -> Result<(), BindingError> {
         let jvm = self.borrow();
         jvm.invoke(
             self.instance_ref(),
@@ -314,6 +310,54 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
             &[InvocationArg::try_from(file_only)?.into_primitive()?],
         )?;
         Ok(())
+    }
+
+    /// Get series metadata
+    fn get_series_metadata(&self) -> Result<Metadata<&Jvm>, BindingError> {
+        let jvm = self.borrow();
+        let metadata = jvm.invoke(
+            self.instance_ref(),
+            "getSeriesMetadata",
+            InvocationArg::empty(),
+        )?;
+        Ok(Metadata::new_with_instance(jvm, metadata))
+    }
+
+    /// Get global metadata
+    fn get_global_metadata(&self) -> Result<Metadata<&Jvm>, BindingError> {
+        let jvm = self.borrow();
+        let metadata = jvm.invoke(
+            self.instance_ref(),
+            "getGlobalMetadata",
+            InvocationArg::empty(),
+        )?;
+        Ok(Metadata::new_with_instance(jvm, metadata))
+    }
+
+    /// Sets the metadata store associated with this reader.
+    fn set_metadata_store<J: Borrow<Jvm>>(
+        &self,
+        metadata: OmeXmlMetadata<J>,
+    ) -> Result<(), BindingError> {
+        let jvm = self.borrow();
+        jvm.invoke(
+            self.instance_ref(),
+            "setMetadataStore",
+            &[InvocationArg::from(metadata.inner)],
+        )?;
+        Ok(())
+    }
+
+    /// Gets the metadata store associated with this reader.
+    fn get_metadata_store(&self) -> Result<OmeXmlMetadata<&Jvm>, BindingError> {
+        let jvm = self.borrow();
+        let res = jvm.invoke(
+            self.instance_ref(),
+            "getMetadataStore",
+            InvocationArg::empty(),
+        )?;
+        let res = jvm.cast(&res, "loci.formats.meta.IMetadata")?;
+        Ok(OmeXmlMetadata::new_with_instance(jvm, res))
     }
 }
 
@@ -676,5 +720,120 @@ mod tests {
     fn test_close(#[case] reader: impl FormatReader, cmu_1_svs: &str) {
         let () = reader.set_id(cmu_1_svs).expect("Failed to open file");
         reader.close(false).expect("Failed to close reader");
+    }
+
+    #[rstest]
+    #[case(image_reader())]
+    fn test_metadata_series(#[case] reader: impl FormatReader, cmu_1_svs: &str) {
+        let () = reader.set_id(cmu_1_svs).expect("Failed to open file");
+        let metadata = reader
+            .get_series_metadata()
+            .expect("Failed to get series metadata");
+        assert_eq!(
+            &metadata.keys().expect(""),
+            &[
+                "Date",
+                "MPP",
+                "ImageID",
+                "User",
+                "46920x33014 [0,100 46000x32914] (256x256) JPEG/RGB Q",
+                "Parmset",
+                "Filtered",
+                "LineCameraSkew",
+                "StripeWidth",
+                "Left",
+                "AppMag",
+                "LineAreaYOffset",
+                "Time",
+                "LineAreaXOffset",
+                "Originalheight",
+                "ICC Profile",
+                "OriginalWidth",
+                "Filename",
+                "Focus Offset",
+                "Top",
+                "ScanScope ID"
+            ]
+            .into_iter()
+            .map(|v| v.to_string())
+            .collect::<Vec<_>>()
+        );
+    }
+
+    #[rstest]
+    #[case(image_reader())]
+    fn test_metadata_series_value(#[case] reader: impl FormatReader, cmu_1_svs: &str) {
+        let () = reader.set_id(cmu_1_svs).expect("Failed to open file");
+        let metadata = reader
+            .get_series_metadata()
+            .expect("Failed to get series metadata");
+        assert_eq!(
+            metadata
+                .get::<String>("ScanScope ID")
+                .expect("Failed to get metadata value"),
+            Some("CPAPERIOCS".to_string())
+        );
+
+        assert_eq!(
+            metadata
+                .get::<String>("ScanScope I")
+                .expect("Failed to get metadata value"),
+            None
+        );
+    }
+
+    #[rstest]
+    #[case(image_reader())]
+    fn test_metadata_global(#[case] reader: impl FormatReader, cmu_1_svs: &str) {
+        let () = reader.set_id(cmu_1_svs).expect("Failed to open file");
+        let metadata = reader
+            .get_global_metadata()
+            .expect("Failed to get series metadata");
+        assert_eq!(
+            &metadata.keys().expect(""),
+            &[
+                "PhotometricInterpretation",
+                "PlanarConfiguration",
+                "MetaDataPhotometricInterpretation",
+                "Comment",
+                "ImageLength",
+                "NewSubfileType",
+                "YCbCrSubSampling",
+                "BitsPerSample",
+                "Compression",
+                "SamplesPerPixel",
+                "NumberOfChannels",
+                "TileByteCounts",
+                "ImageWidth",
+                "TileOffsets",
+                "TileLength",
+                "TileWidth"
+            ]
+            .into_iter()
+            .map(|v| v.to_string())
+            .collect::<Vec<_>>()
+        );
+    }
+
+    #[rstest]
+    #[case(image_reader())]
+    fn test_metadata_global_value(#[case] reader: impl FormatReader, cmu_1_svs: &str) {
+        let () = reader.set_id(cmu_1_svs).expect("Failed to open file");
+        let metadata = reader
+            .get_global_metadata()
+            .expect("Failed to get series metadata");
+        assert_eq!(
+            metadata
+                .get::<String>("MetaDataPhotometricInterpretation")
+                .expect("Failed to get metadata value"),
+            Some("RGB".to_string())
+        );
+
+        assert_eq!(
+            metadata
+                .get::<String>("Photometric")
+                .expect("Failed to get metadata value"),
+            None
+        );
     }
 }
