@@ -13,6 +13,9 @@ pub enum BioformatsWSIError {
     #[error(transparent)]
     ConversionInt(#[from] TryFromIntError),
 
+    #[error("Cannot open file: {0}")]
+    Io(String),
+
     #[error("Invalid Level: {0}")]
     InvalidLevel(u32),
 

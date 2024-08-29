@@ -10,6 +10,7 @@ use crate::{
     },
 };
 use image::{DynamicImage, RgbImage, RgbaImage};
+use std::path::PathBuf;
 
 pub struct BioformatsSlide<T: FormatReader> {
     reader: T,
@@ -27,6 +28,9 @@ impl<T: FormatReader> BioformatsSlide<T> {
     /// should not create a new object on every tile request. Instead, it should maintain a cache
     /// of `BioformatsSlide` objects and reuse them when possible.
     pub fn new<F: AsRef<str>>(reader: T, filename: F) -> Result<Self, BioformatsWSIError> {
+        if !PathBuf::from(filename.as_ref()).exists() {
+            return Err(BioformatsWSIError::Io(filename.as_ref().to_string()));
+        }
         reader.set_flattened_resolutions(false)?;
         reader.set_id(filename)?;
         reader.set_series(0)?;
