@@ -1,3 +1,10 @@
+## [1.1.0](https://github.com/AzHicham/bioformats-rs/compare/1.0.0...1.1.0) (2024-09-02)
+
+
+### Features
+
+* add binding for metadata  ([#3](https://github.com/AzHicham/bioformats-rs/issues/3)) ([fa14115](https://github.com/AzHicham/bioformats-rs/commit/fa1411502d641f23d90a12a4f469c40cd89cab68))
+
 ## 1.0.0 (2024-08-28)
 
 
