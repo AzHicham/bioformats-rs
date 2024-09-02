@@ -33,6 +33,7 @@ dependencies = [
  "image",
  "j4rs",
  "rstest",
+ "serde",
  "thiserror",
 ]
 

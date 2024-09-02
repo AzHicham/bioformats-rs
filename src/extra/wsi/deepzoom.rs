@@ -3,7 +3,7 @@ use crate::{
     extra::{
         models::{Address, Region, Size},
         utils::resize_image,
-        wsi::{BioformatsSlide, BioformatsWSIError},
+        wsi::{BioformatsSlide, WSIError},
     },
 };
 use derivative::Derivative;
@@ -30,7 +30,7 @@ pub struct DeepZoomGenerator<I: FormatReader, B: Borrow<BioformatsSlide<I>>> {
 }
 
 impl<I: FormatReader, B: Borrow<BioformatsSlide<I>>> DeepZoomGenerator<I, B> {
-    pub fn new(slide: B, tile_size: u32) -> Result<Self, BioformatsWSIError> {
+    pub fn new(slide: B, tile_size: u32) -> Result<Self, WSIError> {
         let slide_ref = slide.borrow();
 
         let l0_offset = Address { x: 0, y: 0 };
@@ -127,18 +127,14 @@ impl<I: FormatReader, B: Borrow<BioformatsSlide<I>>> DeepZoomGenerator<I, B> {
         self.level_tiles.iter().map(|&size| size.w * size.h).sum()
     }
 
-    pub fn get_tile_info(
-        &self,
-        level: u32,
-        address: Address,
-    ) -> Result<(Region, Size), BioformatsWSIError> {
+    pub fn get_tile_info(&self, level: u32, address: Address) -> Result<(Region, Size), WSIError> {
         if level as usize >= self.level_count {
-            return Err(BioformatsWSIError::InvalidLevel(level));
+            return Err(WSIError::InvalidLevel(level));
         }
         if address.x >= self.level_tiles[level as usize].w
             || address.y >= self.level_tiles[level as usize].h
         {
-            return Err(BioformatsWSIError::InvalidAddress(address));
+            return Err(WSIError::InvalidAddress(address));
         }
 
         let level_dimensions = self.level_dimensions[level as usize];
@@ -200,11 +196,7 @@ impl<I: FormatReader, B: Borrow<BioformatsSlide<I>>> DeepZoomGenerator<I, B> {
         Ok((region, z_size))
     }
 
-    pub fn get_tile_image(
-        &self,
-        level: u32,
-        location: Address,
-    ) -> Result<DynamicImage, BioformatsWSIError> {
+    pub fn get_tile_image(&self, level: u32, location: Address) -> Result<DynamicImage, WSIError> {
         let (region, final_size) = self.get_tile_info(level, location)?;
         let image = self.slide.borrow().read_image(&region)?;
 

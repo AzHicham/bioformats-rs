@@ -1,15 +1,18 @@
 use crate::{
-    bindings::reader::FormatReader,
+    bindings::{metadata::OmeXmlMetadata, reader::FormatReader},
     extra::{
         models::{Address, PixelType, Region, Size},
         utils::{
             planar_to_interleaved_rgb, planar_to_interleaved_rgba, preserve_aspect_ratio,
             resize_image, vec_i8_into_u8,
         },
-        wsi::error::BioformatsWSIError,
+        wsi::error::WSIError,
     },
 };
 use image::{DynamicImage, RgbImage, RgbaImage};
+use j4rs::Jvm;
+use serde::de::DeserializeOwned;
+use std::path::PathBuf;
 
 pub struct BioformatsSlide<T: FormatReader> {
     reader: T,
@@ -26,26 +29,24 @@ impl<T: FormatReader> BioformatsSlide<T> {
     /// This function can be expensive; avoid calling it unnecessarily. For example, a tile server
     /// should not create a new object on every tile request. Instead, it should maintain a cache
     /// of `BioformatsSlide` objects and reuse them when possible.
-    pub fn new<F: AsRef<str>>(reader: T, filename: F) -> Result<Self, BioformatsWSIError> {
+    pub fn new<F: AsRef<str>>(reader: T, filename: F) -> Result<Self, WSIError> {
+        if !PathBuf::from(filename.as_ref()).exists() {
+            return Err(WSIError::Io(filename.as_ref().to_string()));
+        }
+        reader.set_metadata_store(OmeXmlMetadata::new(reader.borrow())?)?;
         reader.set_flattened_resolutions(false)?;
         reader.set_id(filename)?;
-        reader.set_series(0)?;
-        reader.set_resolution(0)?;
         let level_dimensions = compute_all_level_dimensions(&reader)?;
         let level_downsamples = compute_all_level_downsamples(&level_dimensions);
         let is_interleaved = reader.is_interleaved()?;
         let channel_count = reader.get_size_c()?.try_into()?;
-        let pixel_type = match reader.get_pixel_type()? {
-            0 => PixelType::I8,
-            1 => PixelType::U8,
-            2 => PixelType::I16,
-            3 => PixelType::U16,
-            4 => PixelType::I32,
-            5 => PixelType::U32,
-            6 => PixelType::F32,
-            7 => PixelType::F64,
-            i => return Err(BioformatsWSIError::InvalidPixelType(i)),
-        };
+        let pixel_type = reader.get_pixel_type()?.try_into()?;
+
+        // Set the series and resolution to 0
+        // after all function call to avoid side effect
+        reader.set_series(0)?;
+        reader.set_resolution(0)?;
+
         Ok(Self {
             reader,
             level_dimensions,
@@ -65,11 +66,11 @@ impl<T: FormatReader> BioformatsSlide<T> {
     ///
     /// This method returns the Size { width, height } number of pixels of the whole slide image at the
     /// specified level. Returns an error if the level is invalid
-    pub fn get_level_dimensions(&self, level: u32) -> Result<Size, BioformatsWSIError> {
+    pub fn get_level_dimensions(&self, level: u32) -> Result<Size, WSIError> {
         self.level_dimensions
             .get(level as usize)
             .copied()
-            .ok_or(BioformatsWSIError::InvalidLevel(level))
+            .ok_or(WSIError::InvalidLevel(level))
     }
 
     /// Get dimensions of all available levels
@@ -81,11 +82,11 @@ impl<T: FormatReader> BioformatsSlide<T> {
     ///
     /// This method returns the downsample (f64) at the specified level.
     /// Returns an error if the level is invalid
-    pub fn get_level_downsample(&self, level: u32) -> Result<f64, BioformatsWSIError> {
+    pub fn get_level_downsample(&self, level: u32) -> Result<f64, WSIError> {
         self.level_downsamples
             .get(level as usize)
             .copied()
-            .ok_or(BioformatsWSIError::InvalidLevel(level))
+            .ok_or(WSIError::InvalidLevel(level))
     }
 
     /// Get all downsampling factors for all available levels.
@@ -122,14 +123,14 @@ impl<T: FormatReader> BioformatsSlide<T> {
     ///     size: (width, height) in pixels of the outputted region
     ///
     /// Size of output Vec is Width * Height * N pixels (N = 3 for RGB or 4 RGBA)
-    pub fn read_region(&self, region: &Region) -> Result<Vec<i8>, BioformatsWSIError> {
+    pub fn read_region(&self, region: &Region) -> Result<Vec<i8>, WSIError> {
         self.reader.set_resolution(region.level.try_into()?)?;
         // Check Region validity according to current resolution
         let level_dimensions = self.get_level_dimensions(region.level)?;
         if region.address.x + region.size.w > level_dimensions.w
             || region.address.y + region.size.h > level_dimensions.h
         {
-            return Err(BioformatsWSIError::OutOfBoundRegion(*region));
+            return Err(WSIError::OutOfBoundRegion(*region));
         }
 
         let index = self.reader.get_index(0, 0, 0)?;
@@ -150,11 +151,11 @@ impl<T: FormatReader> BioformatsSlide<T> {
     ///     offset: (x, y) coordinate (increasing downwards/to the right) of top left pixel position
     ///     level: At which level to grab the region from
     ///     size: (width, height) in pixels of the outputted region
-    pub fn read_image(&self, region: &Region) -> Result<DynamicImage, BioformatsWSIError> {
+    pub fn read_image(&self, region: &Region) -> Result<DynamicImage, WSIError> {
         match (self.pixel_type, self.channel_count) {
             (PixelType::U8, 3) => self.read_rgb8_image(region),
             (PixelType::U8, 4) => self.read_rgba8_image(region),
-            (p, c) => Err(BioformatsWSIError::UnsupportedImageType {
+            (p, c) => Err(WSIError::UnsupportedImageType {
                 channel_count: c,
                 pixel_type: p,
             }),
@@ -164,7 +165,7 @@ impl<T: FormatReader> BioformatsSlide<T> {
     // Get an image thumbnail of desired size of the whole slide image.
     /// Args:
     ///     size: (width, height) in pixels of the thumbnail
-    pub fn thumbnail(&self, size: &Size) -> Result<DynamicImage, BioformatsWSIError> {
+    pub fn thumbnail(&self, size: &Size) -> Result<DynamicImage, WSIError> {
         let dimension_level0 = self.get_level_dimensions(0)?;
         let downsample = (
             f64::from(dimension_level0.w) / f64::from(size.w),
@@ -182,7 +183,7 @@ impl<T: FormatReader> BioformatsSlide<T> {
         Ok(resize_image(image, &size)?)
     }
 
-    fn read_rgb8_image(&self, region: &Region) -> Result<DynamicImage, BioformatsWSIError> {
+    fn read_rgb8_image(&self, region: &Region) -> Result<DynamicImage, WSIError> {
         let buffer = self.read_region(region)?;
         let size = region.size;
         let image = RgbImage::from_vec(size.w, size.h, vec_i8_into_u8(buffer)).unwrap(); // Should be safe because buffer is big enough
@@ -193,7 +194,7 @@ impl<T: FormatReader> BioformatsSlide<T> {
         }
     }
 
-    fn read_rgba8_image(&self, region: &Region) -> Result<DynamicImage, BioformatsWSIError> {
+    fn read_rgba8_image(&self, region: &Region) -> Result<DynamicImage, WSIError> {
         let buffer = self.read_region(region)?;
         let size = region.size;
         let image = RgbaImage::from_vec(size.w, size.h, vec_i8_into_u8(buffer)).unwrap(); // Should be safe because buffer is big enough
@@ -203,11 +204,49 @@ impl<T: FormatReader> BioformatsSlide<T> {
             Ok(DynamicImage::ImageRgba8(planar_to_interleaved_rgba(image)))
         }
     }
+
+    pub fn ome_xml_metadata(&self) -> Result<OmeXmlMetadata<&Jvm>, WSIError> {
+        Ok(self.reader.get_metadata_store()?)
+    }
+
+    pub fn get_global_property_names(&self) -> Result<Vec<String>, WSIError> {
+        Ok(self.reader.get_global_metadata()?.keys()?)
+    }
+
+    pub fn get_series_property_names(&self) -> Result<Vec<String>, WSIError> {
+        Ok(self.reader.get_series_metadata()?.keys()?)
+    }
+
+    pub fn get_global_property_value<V: DeserializeOwned + 'static>(
+        &self,
+        name: &str,
+    ) -> Result<V, WSIError> {
+        Ok(self
+            .reader
+            .get_global_metadata()?
+            .get(name)?
+            .ok_or(WSIError::PropertyNotFound(name.to_string()))?)
+    }
+
+    pub fn get_series_property_value<V: DeserializeOwned + 'static>(
+        &self,
+        name: &str,
+    ) -> Result<V, WSIError> {
+        Ok(self
+            .reader
+            .get_series_metadata()?
+            .get(name)?
+            .ok_or(WSIError::PropertyNotFound(name.to_string()))?)
+    }
 }
 
-fn compute_all_level_dimensions<T: FormatReader>(
-    reader: &T,
-) -> Result<Vec<Size>, BioformatsWSIError> {
+impl<T: FormatReader> Drop for BioformatsSlide<T> {
+    fn drop(&mut self) {
+        let _ = self.reader.close(false);
+    }
+}
+
+fn compute_all_level_dimensions<T: FormatReader>(reader: &T) -> Result<Vec<Size>, WSIError> {
     let nb_levels = reader.get_resolution_count()?;
     let mut res = Vec::with_capacity(nb_levels as usize);
     for level in 0..nb_levels {
@@ -362,7 +401,7 @@ mod tests {
             level,
             address: Address { x: 0, y: 0 },
         });
-        assert!(matches!(res, Err(BioformatsWSIError::OutOfBoundRegion(_))));
+        assert!(matches!(res, Err(WSIError::OutOfBoundRegion(_))));
     }
 
     #[rstest]
@@ -375,5 +414,65 @@ mod tests {
         // Aspect ratio is preserved for thumbnail call
         assert_eq!(image.height(), 366);
         assert_eq!(image.width(), 512);
+    }
+
+    #[rstest]
+    fn test_ome_xml_metadata(image_reader: impl FormatReader, cmu_1_svs: &str) {
+        let wsi = BioformatsSlide::new(image_reader, cmu_1_svs)
+            .expect("Failed to create BioformatsSlide");
+        let metadata = wsi.ome_xml_metadata().expect("Cannot get metadata");
+        assert_eq!(
+            metadata.get_physical_size_x(0).unwrap(),
+            Some((0.499, "µm".to_string()))
+        );
+        assert_eq!(
+            metadata.get_physical_size_y(0).unwrap(),
+            Some((0.499, "µm".to_string()))
+        );
+        assert_eq!(metadata.get_physical_size_z(0).unwrap(), None);
+    }
+
+    #[rstest]
+    fn test_get_global_property_names(image_reader: impl FormatReader, cmu_1_svs: &str) {
+        let wsi = BioformatsSlide::new(image_reader, cmu_1_svs)
+            .expect("Failed to create BioformatsSlide");
+        let names = wsi
+            .get_global_property_names()
+            .expect("Cannot get global property names");
+        assert_eq!(names.len(), 16);
+        assert_eq!(names[0], "PhotometricInterpretation");
+    }
+
+    #[rstest]
+    fn test_get_global_property_value(image_reader: impl FormatReader, cmu_1_svs: &str) {
+        let wsi = BioformatsSlide::new(image_reader, cmu_1_svs)
+            .expect("Failed to create BioformatsSlide");
+        let value = wsi.get_global_property_value::<String>("PhotometricInterpretation");
+        assert_eq!(value.unwrap(), "RGB");
+
+        let value = wsi.get_global_property_value::<String>("unknown");
+        assert!(matches!(value, Err(WSIError::PropertyNotFound(_))));
+    }
+
+    #[rstest]
+    fn test_get_series_property_names(image_reader: impl FormatReader, cmu_1_svs: &str) {
+        let wsi = BioformatsSlide::new(image_reader, cmu_1_svs)
+            .expect("Failed to create BioformatsSlide");
+        let names = wsi
+            .get_series_property_names()
+            .expect("Cannot get series property names");
+
+        assert_eq!(names.len(), 21);
+    }
+
+    #[rstest]
+    fn test_get_series_property_value(image_reader: impl FormatReader, cmu_1_svs: &str) {
+        let wsi = BioformatsSlide::new(image_reader, cmu_1_svs)
+            .expect("Failed to create BioformatsSlide");
+        let value = wsi.get_series_property_value::<String>("ScanScope ID");
+        assert_eq!(value.unwrap(), "CPAPERIOCS");
+
+        let value = wsi.get_global_property_value::<String>("unknown");
+        assert!(matches!(value, Err(WSIError::PropertyNotFound(_))));
     }
 }

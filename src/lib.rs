@@ -4,4 +4,6 @@ pub mod extra;
 #[cfg(test)]
 mod fixture;
 
-pub use j4rs::*;
+pub mod j4rs {
+    pub use j4rs::*;
+}
