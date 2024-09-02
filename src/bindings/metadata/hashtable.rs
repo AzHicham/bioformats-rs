@@ -24,7 +24,7 @@ impl<J: Borrow<Jvm>> Metadata<J> {
         let jvm = self.jvm.borrow();
         let res = jvm.invoke(&self.inner, "get", &[InvocationArg::try_from(key)?])?;
         if is_null(self.jvm.borrow(), &res)? {
-            return Ok(None);
+            Ok(None)
         } else {
             let res: T = jvm.to_rust(res)?;
             Ok(Some(res))
