@@ -248,7 +248,7 @@ fn java_to_rust_length(
 ) -> Result<Option<(f32, String)>, BindingError> {
     let is_null = is_null(jvm, &instance)?;
     if is_null {
-        return Ok(None);
+        Ok(None)
     } else {
         let value = jvm.invoke(&instance, "value", InvocationArg::empty())?;
         let value: f32 = jvm.to_rust(value)?;

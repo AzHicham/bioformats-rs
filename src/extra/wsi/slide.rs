@@ -221,22 +221,20 @@ impl<T: FormatReader> BioformatsSlide<T> {
         &self,
         name: &str,
     ) -> Result<V, WSIError> {
-        Ok(self
-            .reader
+        self.reader
             .get_global_metadata()?
             .get(name)?
-            .ok_or(WSIError::PropertyNotFound(name.to_string()))?)
+            .ok_or(WSIError::PropertyNotFound(name.to_string()))
     }
 
     pub fn get_series_property_value<V: DeserializeOwned + 'static>(
         &self,
         name: &str,
     ) -> Result<V, WSIError> {
-        Ok(self
-            .reader
+        self.reader
             .get_series_metadata()?
             .get(name)?
-            .ok_or(WSIError::PropertyNotFound(name.to_string()))?)
+            .ok_or(WSIError::PropertyNotFound(name.to_string()))
     }
 }
 

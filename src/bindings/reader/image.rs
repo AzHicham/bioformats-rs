@@ -4,6 +4,7 @@ use j4rs::{Instance, InvocationArg, Jvm};
 use std::borrow::Borrow;
 
 /// `ImageReader` is the master file format reader for all supported formats.
+///
 /// It uses one instance of each reader subclass (specified in readers.txt, or other class list source)
 /// to identify file formats and read data.
 pub struct ImageReader<J: Borrow<Jvm>> {
