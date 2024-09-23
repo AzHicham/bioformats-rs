@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1727107264571,
+  "lastUpdate": 1727107444774,
   "repoUrl": "https://github.com/AzHicham/bioformats-rs",
   "entries": {
     "bioformats-rs Benchmark": [
@@ -587,6 +587,90 @@ window.BENCHMARK_DATA = {
             "name": "deepzoom_read_image_512_recreate_dz",
             "value": 12128895,
             "range": "± 1646078",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hicham.azimani1@gmail.com",
+            "name": "Hicham Azimani",
+            "username": "AzHicham"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d5e2d19ef329c48d0d2047a2df20ba844098ee75",
+          "message": "[Clippy] Code maintenance (#7)\n\nCo-authored-by: AzHicham <AzHicham@users.noreply.github.com>",
+          "timestamp": "2024-09-23T18:00:54+02:00",
+          "tree_id": "20ea09d638858ef8d41beb413807f5774098f60f",
+          "url": "https://github.com/AzHicham/bioformats-rs/commit/d5e2d19ef329c48d0d2047a2df20ba844098ee75"
+        },
+        "date": 1727107443964,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bioformats_read_image_256",
+            "value": 5780625,
+            "range": "± 1494835",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bioformats_read_image_512",
+            "value": 12821754,
+            "range": "± 1692345",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bioformats_read_region_256",
+            "value": 5446169,
+            "range": "± 641648",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bioformats_read_region_512",
+            "value": 11882417,
+            "range": "± 1058957",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_256",
+            "value": 5402488,
+            "range": "± 663652",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_256_arc",
+            "value": 5381380,
+            "range": "± 1072231",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_256_recreate_dz",
+            "value": 5401635,
+            "range": "± 817443",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_512",
+            "value": 12099337,
+            "range": "± 1248805",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_512_arc",
+            "value": 12154976,
+            "range": "± 1602233",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_512_recreate_dz",
+            "value": 12481111,
+            "range": "± 996342",
             "unit": "ns/iter"
           }
         ]
