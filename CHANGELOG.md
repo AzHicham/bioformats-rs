@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/AzHicham/bioformats-rs/compare/1.1.0...1.1.1) (2024-09-24)
+
+
+### Bug Fixes
+
+* add retry in build.rs ([#6](https://github.com/AzHicham/bioformats-rs/issues/6)) ([b650843](https://github.com/AzHicham/bioformats-rs/commit/b650843b8e7a7c0ce3b2e02815c353d30594d2d0))
+
 ## [1.1.0](https://github.com/AzHicham/bioformats-rs/compare/1.0.0...1.1.0) (2024-09-02)
 
 
