@@ -9,7 +9,7 @@ This work has no affiliations with the official Bioformats project.
 
 ## Requirements
 
-* Rust &ge; 1.75
+* Rust &ge; 1.81
 * A Java Runtime Environment (JRE) installed on your system (>= 9)
 
 ## Notes
