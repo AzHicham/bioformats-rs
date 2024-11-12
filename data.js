@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1731398733606,
+  "lastUpdate": 1731427424728,
   "repoUrl": "https://github.com/AzHicham/bioformats-rs",
   "entries": {
     "bioformats-rs Benchmark": [
@@ -1259,6 +1259,90 @@ window.BENCHMARK_DATA = {
             "name": "deepzoom_read_image_512_recreate_dz",
             "value": 12208699,
             "range": "± 1846764",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hicham.azimani1@gmail.com",
+            "name": "Hicham Azimani",
+            "username": "AzHicham"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "efd3afeb73b72777e7b7abf987a0ceeb59d60d47",
+          "message": "fix: major lib update + increase MSVR (#18)",
+          "timestamp": "2024-11-12T17:00:21+01:00",
+          "tree_id": "f99c5626df6e6403b6affa2b983bf0552c6b8091",
+          "url": "https://github.com/AzHicham/bioformats-rs/commit/efd3afeb73b72777e7b7abf987a0ceeb59d60d47"
+        },
+        "date": 1731427424305,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bioformats_read_image_256",
+            "value": 5058913,
+            "range": "± 519391",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bioformats_read_image_512",
+            "value": 11042339,
+            "range": "± 331566",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bioformats_read_region_256",
+            "value": 4859195,
+            "range": "± 70794",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bioformats_read_region_512",
+            "value": 10640552,
+            "range": "± 516799",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_256",
+            "value": 4886197,
+            "range": "± 175366",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_256_arc",
+            "value": 4901047,
+            "range": "± 156397",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_256_recreate_dz",
+            "value": 4931422,
+            "range": "± 472072",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_512",
+            "value": 11016875,
+            "range": "± 286921",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_512_arc",
+            "value": 11028174,
+            "range": "± 272455",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_512_recreate_dz",
+            "value": 11016808,
+            "range": "± 436774",
             "unit": "ns/iter"
           }
         ]
