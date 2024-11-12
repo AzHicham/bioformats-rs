@@ -20,7 +20,7 @@ extra = ["dep:image", "dep:fast_image_resize", "dep:derivative"]
 
 [dependencies]
 thiserror = { version = "1.0", features = [] }
-j4rs = { version = "0.20", features = [] }
+j4rs = { version = "0.21", features = [] }
 serde = { version = "1.0", features = [] }
 
 # Optional dependencies
@@ -29,11 +29,11 @@ image = { version = "0.25", optional = true, default-features = false }
 fast_image_resize = { version = "4.2", features = ["image"], optional = true }
 
 [dev-dependencies]
-rstest = "0.22"
+rstest = "0.23"
 bencher = "0.1"
 
 [build-dependencies]
-j4rs = { version = "0.20", features = [] }
+j4rs = { version = "0.21", features = [] }
 retry = { version = "2.0.0"}
 anyhow = { version = "1.0"}
 
