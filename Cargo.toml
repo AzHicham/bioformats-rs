@@ -19,7 +19,7 @@ gpl-formats = []
 extra = ["dep:image", "dep:fast_image_resize", "dep:derivative"]
 
 [dependencies]
-thiserror = { version = "1.0", features = [] }
+thiserror = { version = "2.0", features = [] }
 j4rs = { version = "0.20", features = [] }
 serde = { version = "1.0", features = [] }
 
