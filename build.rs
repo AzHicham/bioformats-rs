@@ -17,10 +17,10 @@ fn deploy_java_artifacts() -> Result<(), J4RsError> {
         )]))
         .build()?;
 
-    jvm.deploy_artifact(&MavenArtifact::from("ome:bioformats_package:7.3.1"))?;
+    jvm.deploy_artifact(&MavenArtifact::from("ome:bioformats_package:8.0.1"))?;
 
     #[cfg(feature = "gpl-formats")]
-    jvm.deploy_artifact(&MavenArtifact::from("ome:formats-gpl:7.3.1"))?;
+    jvm.deploy_artifact(&MavenArtifact::from("ome:formats-gpl:8.0.1"))?;
 
     Ok(())
 }
