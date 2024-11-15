@@ -17,7 +17,7 @@ This work has no affiliations with the official Bioformats project.
 This project is still in its early stages.
 
 The Bioformats Java library is downloaded and extracted during the build process.
-Currently, the version of the Bioformats library is fixed to 7.3.1.
+Currently, the version of the Bioformats library is fixed to 8.0.1.
 
 This crate provides a high-level API to read image files using Bioformats.
 
