@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1731427424728,
+  "lastUpdate": 1731658528407,
   "repoUrl": "https://github.com/AzHicham/bioformats-rs",
   "entries": {
     "bioformats-rs Benchmark": [
@@ -1343,6 +1343,90 @@ window.BENCHMARK_DATA = {
             "name": "deepzoom_read_image_512_recreate_dz",
             "value": 11016808,
             "range": "± 436774",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hicham.azimani1@gmail.com",
+            "name": "Hicham Azimani",
+            "username": "AzHicham"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bf6eb369057677959ed85034292b115642faf254",
+          "message": "ci: remove rust cache & audit workflow (#19)",
+          "timestamp": "2024-11-15T09:12:36+01:00",
+          "tree_id": "185cdda0a8243baf1fadc7bbfabe6232a72b2004",
+          "url": "https://github.com/AzHicham/bioformats-rs/commit/bf6eb369057677959ed85034292b115642faf254"
+        },
+        "date": 1731658527957,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bioformats_read_image_256",
+            "value": 5435692,
+            "range": "± 1402399",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bioformats_read_image_512",
+            "value": 11399500,
+            "range": "± 1936425",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bioformats_read_region_256",
+            "value": 4923074,
+            "range": "± 995983",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bioformats_read_region_512",
+            "value": 10879446,
+            "range": "± 2239096",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_256",
+            "value": 4937144,
+            "range": "± 1114285",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_256_arc",
+            "value": 4930154,
+            "range": "± 1130150",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_256_recreate_dz",
+            "value": 4954925,
+            "range": "± 1353230",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_512",
+            "value": 11128917,
+            "range": "± 1699140",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_512_arc",
+            "value": 11089994,
+            "range": "± 1598822",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_512_recreate_dz",
+            "value": 11130345,
+            "range": "± 2419002",
             "unit": "ns/iter"
           }
         ]
