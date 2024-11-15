@@ -27,9 +27,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ env.RUST_VERSION }}
-      - uses: Swatinem/rust-cache@v2
-        with:
-          key: ubuntu-benchmark
       - name: Run cargo bench
         run: cargo bench --workspace --all-features | tee bench-output.txt
       - name: Store benchmark result

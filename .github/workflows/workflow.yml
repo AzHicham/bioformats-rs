@@ -43,12 +43,6 @@ jobs:
       - name: Download sample tests data
         if: steps.cache-slide.outputs.cache-hit != 'true'
         run: make dl-test-images
-      - uses: Swatinem/rust-cache@v2
-        with:
-          key: ${{ matrix.os }}-${{ matrix.build }}-${{ matrix.feature }}
-      - name: Cargo clean (Tmp) # Fix issue on MacOs & release build
-        if: ${{ contains(matrix.os, 'macos') && contains(matrix.build, 'release') }}
-        run: cargo clean
       - name: Install dependencies
         run: make ${{ env.INSTALL_DEPS_CMD }}
       - name: Build & Test
