@@ -1,3 +1,35 @@
+## [1.3.0](https://github.com/AzHicham/bioformats-rs/compare/1.2.0...1.3.0) (2025-08-21)
+
+
+### Features
+
+* update MRSV & deps ([#42](https://github.com/AzHicham/bioformats-rs/issues/42)) ([1599e51](https://github.com/AzHicham/bioformats-rs/commit/1599e513fdb50e6c6f146bfc844e487805ee1a31))
+
+
+### Bug Fixes
+
+* **deps:** update cargo ([#24](https://github.com/AzHicham/bioformats-rs/issues/24)) ([4ff7b05](https://github.com/AzHicham/bioformats-rs/commit/4ff7b05ece3a1e32863a123969ec3a902fdd7a0a))
+* **deps:** update cargo ([#26](https://github.com/AzHicham/bioformats-rs/issues/26)) ([e7cfa06](https://github.com/AzHicham/bioformats-rs/commit/e7cfa06d97efea6dcfa5fcebe9fca55772ec5979))
+* **deps:** update cargo ([#28](https://github.com/AzHicham/bioformats-rs/issues/28)) ([54a211e](https://github.com/AzHicham/bioformats-rs/commit/54a211e54334cc7c6325ba520c99beb7cf5e299c))
+* **deps:** update cargo ([#32](https://github.com/AzHicham/bioformats-rs/issues/32)) ([b79bfc3](https://github.com/AzHicham/bioformats-rs/commit/b79bfc32472f4188130b7e14c89505b94fc7a22f))
+* **deps:** update cargo ([#34](https://github.com/AzHicham/bioformats-rs/issues/34)) ([4e48aa2](https://github.com/AzHicham/bioformats-rs/commit/4e48aa2b80e2e48f9cadc7756175b9d8d533a7f1))
+* **deps:** update rust crate fast_image_resize to v5.1.4 ([#38](https://github.com/AzHicham/bioformats-rs/issues/38)) ([e5d48cf](https://github.com/AzHicham/bioformats-rs/commit/e5d48cfdb73502ee94cf2ab4b43d1cc26d6f330f))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency python to 3.13 ([#30](https://github.com/AzHicham/bioformats-rs/issues/30)) ([4a2a3e4](https://github.com/AzHicham/bioformats-rs/commit/4a2a3e4b0dd2f87c6f0f12e14658f79653c980fb))
+* **deps:** update pre-commit ([#27](https://github.com/AzHicham/bioformats-rs/issues/27)) ([241f58e](https://github.com/AzHicham/bioformats-rs/commit/241f58e9bcba0f35f9e39166a0b338b4ae0617bc))
+* **deps:** update pre-commit ([#33](https://github.com/AzHicham/bioformats-rs/issues/33)) ([f285926](https://github.com/AzHicham/bioformats-rs/commit/f28592622b4a11babe16e1ea8f88725d85ffad6d))
+* **deps:** update pre-commit hook renovatebot/pre-commit-hooks to v39.185.9 ([#29](https://github.com/AzHicham/bioformats-rs/issues/29)) ([70d2d0c](https://github.com/AzHicham/bioformats-rs/commit/70d2d0c0dd174a03990eb8a87914f77e7f933e65))
+* **deps:** update pre-commit hook renovatebot/pre-commit-hooks to v39.205.1 ([#31](https://github.com/AzHicham/bioformats-rs/issues/31)) ([a01ceb9](https://github.com/AzHicham/bioformats-rs/commit/a01ceb961ac2ed1b85d525e861c77420c7c1bb99))
+* **deps:** update pre-commit hook renovatebot/pre-commit-hooks to v39.257.3 ([#35](https://github.com/AzHicham/bioformats-rs/issues/35)) ([a239bb2](https://github.com/AzHicham/bioformats-rs/commit/a239bb289b8bb4f9b0b9a9e522832f593bc4d870))
+* **deps:** update pre-commit hook renovatebot/pre-commit-hooks to v39.96.2 ([#25](https://github.com/AzHicham/bioformats-rs/issues/25)) ([2433d03](https://github.com/AzHicham/bioformats-rs/commit/2433d037f07d1834461ae3bbed105ae497196e03))
+* **deps:** update pre-commit hook renovatebot/pre-commit-hooks to v40 ([#37](https://github.com/AzHicham/bioformats-rs/issues/37)) ([462b1d5](https://github.com/AzHicham/bioformats-rs/commit/462b1d5a65859b7f7a221eb647a72a8e29e3154b))
+* **deps:** update pre-commit hook renovatebot/pre-commit-hooks to v40.30.2 ([#36](https://github.com/AzHicham/bioformats-rs/issues/36)) ([c428af1](https://github.com/AzHicham/bioformats-rs/commit/c428af1d4cc625e2536f859e4845fca7118acdc0))
+* **deps:** update pre-commit hook renovatebot/pre-commit-hooks to v40.62.1 ([#39](https://github.com/AzHicham/bioformats-rs/issues/39)) ([92ddda3](https://github.com/AzHicham/bioformats-rs/commit/92ddda321f741e2d34c70ce272670eb448ad0699))
+* **deps:** update pre-commit hook renovatebot/pre-commit-hooks to v41 ([#41](https://github.com/AzHicham/bioformats-rs/issues/41)) ([cb35cc8](https://github.com/AzHicham/bioformats-rs/commit/cb35cc83c464a9afcd35cb07340d6a6f0b8648ab))
+
 ## [1.2.0](https://github.com/AzHicham/bioformats-rs/compare/1.1.1...1.2.0) (2024-11-18)
 
 
