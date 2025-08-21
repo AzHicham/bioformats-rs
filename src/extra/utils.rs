@@ -1,6 +1,6 @@
 use crate::extra::models::Size;
 use fast_image_resize as fr;
-use fast_image_resize::{images::Image, ImageError, ResizeError};
+use fast_image_resize::{ImageError, ResizeError, images::Image};
 use image::{DynamicImage, RgbImage, RgbaImage};
 use std::cmp;
 
@@ -26,11 +26,7 @@ pub(crate) fn preserve_aspect_ratio(size: &Size, dimension: &Size) -> Size {
         Size {
             w: w as u32,
             h: round_aspect(w / aspect, |n| {
-                if n == 0. {
-                    0.
-                } else {
-                    (aspect - w / n).abs()
-                }
+                if n == 0. { 0. } else { (aspect - w / n).abs() }
             }),
         }
     }

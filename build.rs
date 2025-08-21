@@ -1,4 +1,4 @@
-use j4rs::{errors::J4RsError, JvmBuilder, MavenArtifact, MavenArtifactRepo, MavenSettings};
+use j4rs::{JvmBuilder, MavenArtifact, MavenArtifactRepo, MavenSettings, errors::J4RsError};
 use retry::{delay, delay::Exponential, retry};
 
 fn main() -> anyhow::Result<()> {
