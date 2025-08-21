@@ -79,7 +79,7 @@ impl<I: FormatReader, B: Borrow<BioformatsSlide<I>>> DeepZoomGenerator<I, B> {
                 let best_level_for_downsample = downsamples
                     .iter()
                     .enumerate()
-                    .rfind(|(_, &downsample)| downsample <= *ds)
+                    .rfind(|&(_, &downsample)| downsample <= *ds)
                     .map_or(0, |(index, _)| index);
                 slide_from_dz_level.push(best_level_for_downsample as u32);
             }

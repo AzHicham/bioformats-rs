@@ -381,9 +381,11 @@ mod tests {
             .set_flattened_resolutions(true)
             .expect("Failed to set flattened resolutions");
         let () = reader.set_id(cmu_1_svs).expect("Failed to open file");
-        assert!(reader
-            .has_flattened_resolutions()
-            .expect("Failed to get flattened resolutions"));
+        assert!(
+            reader
+                .has_flattened_resolutions()
+                .expect("Failed to get flattened resolutions")
+        );
     }
 
     #[rstest]
@@ -393,9 +395,11 @@ mod tests {
             .set_flattened_resolutions(false)
             .expect("Failed to set flattened resolutions");
         let () = reader.set_id(cmu_1_svs).expect("Failed to open file");
-        assert!(!reader
-            .has_flattened_resolutions()
-            .expect("Failed to get flattened resolutions"));
+        assert!(
+            !reader
+                .has_flattened_resolutions()
+                .expect("Failed to get flattened resolutions")
+        );
     }
 
     #[rstest]
@@ -414,18 +418,22 @@ mod tests {
     #[case(image_reader())]
     fn test_is_interleaved(#[case] reader: impl FormatReader, cmu_1_svs: &str) {
         let () = reader.set_id(cmu_1_svs).expect("Failed to open file");
-        assert!(!reader
-            .is_interleaved()
-            .expect("Failed to get flattened resolutions"),);
+        assert!(
+            !reader
+                .is_interleaved()
+                .expect("Failed to get flattened resolutions"),
+        );
     }
 
     #[rstest]
     #[case(image_reader())]
     fn test_is_little_endian(#[case] reader: impl FormatReader, cmu_1_svs: &str) {
         let () = reader.set_id(cmu_1_svs).expect("Failed to open file");
-        assert!(reader
-            .is_little_endian()
-            .expect("Failed to get flattened resolutions"),);
+        assert!(
+            reader
+                .is_little_endian()
+                .expect("Failed to get flattened resolutions"),
+        );
     }
 
     #[rstest]
@@ -636,31 +644,39 @@ mod tests {
     #[case(image_reader())]
     fn test_is_indexed(#[case] reader: impl FormatReader, cmu_1_svs: &str) {
         let () = reader.set_id(cmu_1_svs).expect("Failed to open file");
-        assert!(!reader
-            .is_indexed()
-            .expect("Failed to get flattened resolutions"));
+        assert!(
+            !reader
+                .is_indexed()
+                .expect("Failed to get flattened resolutions")
+        );
     }
 
     #[rstest]
     #[case(image_reader())]
     fn test_is_rgb(#[case] reader: impl FormatReader, cmu_1_svs: &str) {
         let () = reader.set_id(cmu_1_svs).expect("Failed to open file");
-        assert!(reader
-            .is_rgb()
-            .expect("Failed to get flattened resolutions"));
+        assert!(
+            reader
+                .is_rgb()
+                .expect("Failed to get flattened resolutions")
+        );
     }
 
     #[rstest]
     #[case(image_reader())]
     fn test_is_thumbnail_series(#[case] reader: impl FormatReader, cmu_1_svs: &str) {
         let () = reader.set_id(cmu_1_svs).expect("Failed to open file");
-        assert!(!reader
-            .is_thumbnail_series()
-            .expect("Failed to get flattened resolutions"));
+        assert!(
+            !reader
+                .is_thumbnail_series()
+                .expect("Failed to get flattened resolutions")
+        );
         reader.set_series(1).expect("Failed to set series");
-        assert!(reader
-            .is_thumbnail_series()
-            .expect("Failed to get flattened resolutions"));
+        assert!(
+            reader
+                .is_thumbnail_series()
+                .expect("Failed to get flattened resolutions")
+        );
     }
 
     #[rstest]

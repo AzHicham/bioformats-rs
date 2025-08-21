@@ -1,4 +1,4 @@
-use bencher::{benchmark_group, benchmark_main, Bencher};
+use bencher::{Bencher, benchmark_group, benchmark_main};
 use bioformats_rs::{
     bindings::{
         reader::{FormatReader, MemoizerBuilder},

@@ -99,7 +99,7 @@ impl<T: FormatReader> BioformatsSlide<T> {
         self.level_downsamples
             .iter()
             .enumerate()
-            .rfind(|(_, &ds)| ds <= downsample)
+            .rfind(|&(_, &ds)| ds <= downsample)
             .map_or(0, |(index, _)| index) as u32
     }
 
