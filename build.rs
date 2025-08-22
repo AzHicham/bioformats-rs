@@ -1,11 +1,11 @@
 use j4rs::{JvmBuilder, MavenArtifact, MavenArtifactRepo, MavenSettings, errors::J4RsError};
-use retry::{delay, delay::Exponential, retry};
+use retry::{delay::Exponential, retry};
 
 fn main() -> anyhow::Result<()> {
     println!("cargo:rerun-if-changed=build.rs");
 
     Ok(retry(
-        Exponential::from_millis(1000).map(delay::jitter).take(4),
+        Exponential::from_millis(1000).take(4),
         deploy_java_artifacts,
     )?)
 }
