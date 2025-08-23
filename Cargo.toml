@@ -16,7 +16,7 @@ build = "build.rs"
 [features]
 default = []
 gpl-formats = []
-extra = ["dep:image", "dep:fast_image_resize", "dep:derivative"]
+extra = ["dep:image", "dep:fast_image_resize", "dep:derive_more"]
 
 [dependencies]
 [dependencies.thiserror]
@@ -35,10 +35,10 @@ default-features = false
 features = ["default"]
 
 # Optional dependencies
-[dependencies.derivative]
+[dependencies.derive_more]
 version = "2"
 default-features = false
-features = []
+features = ["debug"]
 optional = true
 
 [dependencies.image]

@@ -6,16 +6,14 @@ use crate::{
         wsi::{BioformatsSlide, WSIError},
     },
 };
-use derivative::Derivative;
 use image::DynamicImage;
 use std::borrow::Borrow;
 
-#[derive(Derivative)]
-#[derivative(Debug)]
+#[derive(derive_more::Debug)]
 pub struct DeepZoomGenerator<I: FormatReader, B: Borrow<BioformatsSlide<I>>> {
-    #[derivative(Debug = "ignore")]
+    #[debug(ignore)]
     slide: B,
-    #[derivative(Debug = "ignore")]
+    #[debug(ignore)]
     _phantom: std::marker::PhantomData<I>,
 
     level_count: usize,
