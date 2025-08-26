@@ -1,0 +1,16 @@
+[package]
+name = "wsi-example"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "wsi-example"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+image = { version = "0.25", default-features = false, features = ["png"] }
+
+[dependencies.bioformats-rs]
+path = "../.."
+features = ["extra"]

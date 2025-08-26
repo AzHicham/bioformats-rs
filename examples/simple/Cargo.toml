@@ -1,0 +1,15 @@
+[package]
+name = "simple-example"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "simple-example"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+
+[dependencies.bioformats-rs]
+path = "../.."
+features = []
