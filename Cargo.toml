@@ -30,7 +30,7 @@ default-features = false
 features = []
 
 [dependencies.j4rs]
-version = "0.22"
+version = "0.23"
 default-features = false
 features = ["default"]
 
@@ -67,7 +67,7 @@ features = []
 
 [build-dependencies]
 [build-dependencies.j4rs]
-version = "0.22"
+version = "0.23"
 default-features = false
 features = ["default"]
 
