@@ -3,6 +3,7 @@ use crate::bindings::{
     metadata::{Metadata, OmeXmlMetadata},
 };
 use j4rs::{Instance, InvocationArg, Jvm};
+use serde::de::DeserializeOwned;
 use std::borrow::Borrow;
 
 // This is a helper trait that is used to get the instance reference of the reader.
@@ -10,6 +11,21 @@ use std::borrow::Borrow;
 pub trait ReaderInstance {
     fn instance_ref(&self) -> &Instance;
     fn instance(self) -> Instance;
+}
+
+/// Invokes a no-argument Java method on the reader instance and deserializes the
+/// returned value into the requested Rust type.
+///
+/// This centralizes the `borrow -> invoke -> to_rust` boilerplate shared by the
+/// many simple getters exposed through [`FormatReader`].
+fn call_no_args<R, T>(reader: &R, method: &str) -> Result<T, BindingError>
+where
+    R: Borrow<Jvm> + ReaderInstance + ?Sized,
+    T: DeserializeOwned + 'static,
+{
+    let jvm = reader.borrow();
+    let res = jvm.invoke(reader.instance_ref(), method, InvocationArg::empty())?;
+    Ok(jvm.to_rust(res)?)
 }
 
 /// This trait is used as the common interface for all the readers.
@@ -28,211 +44,127 @@ pub trait FormatReader: Borrow<Jvm> + ReaderInstance {
 
     /// Return whether resolution flattening is enabled.
     fn has_flattened_resolutions(&self) -> Result<bool, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(
-            self.instance_ref(),
-            "hasFlattenedResolutions",
-            InvocationArg::empty(),
-        )?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "hasFlattenedResolutions")
     }
 
     /// Gets the number of channels returned with each call to openBytes.
     /// The most common case where this value is greater than 1 is for interleaved RGB data, such as a 24-bit color image plane.
     /// However, it is possible for this value to be greater than 1 for non-interleaved data, such as an RGB TIFF with Planar rather than Chunky configuration.
     fn get_rgb_channel_count(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(
-            self.instance_ref(),
-            "getRGBChannelCount",
-            InvocationArg::empty(),
-        )?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getRGBChannelCount")
     }
 
     /// Gets whether the channels are interleaved.
     fn is_interleaved(&self) -> Result<bool, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "isInterleaved", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "isInterleaved")
     }
 
     /// Gets whether the data is in little-endian format
     fn is_little_endian(&self) -> Result<bool, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(
-            self.instance_ref(),
-            "isLittleEndian",
-            InvocationArg::empty(),
-        )?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "isLittleEndian")
     }
 
     /// Returns the optimal sub-image width for use with openBytes
     fn get_optimal_tile_width(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(
-            self.instance_ref(),
-            "getOptimalTileWidth",
-            InvocationArg::empty(),
-        )?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getOptimalTileWidth")
     }
 
     /// Returns the optimal sub-image height for use with openBytes
     fn get_optimal_tile_height(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(
-            self.instance_ref(),
-            "getOptimalTileHeight",
-            InvocationArg::empty(),
-        )?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getOptimalTileHeight")
     }
 
     /// Gets the pixel type
     fn get_pixel_type(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "getPixelType", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getPixelType")
     }
 
     /// Gets a five-character string representing the dimension order in which planes will be returned
     /// Example: XYCZT
     fn get_dimension_order(&self) -> Result<String, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(
-            self.instance_ref(),
-            "getDimensionOrder",
-            InvocationArg::empty(),
-        )?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getDimensionOrder")
     }
 
     /// Gets the name of this file format
     fn get_format(&self) -> Result<String, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "getFormat", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getFormat")
     }
 
     /// Determines the number of image planes in the current file.
     fn get_image_count(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "getImageCount", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getImageCount")
     }
 
     /// Get the current resolution level
     fn get_resolution(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "getResolution", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getResolution")
     }
 
     /// Gets the currently active series
     fn get_series(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "getSeries", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getSeries")
     }
 
     /// Return the number of resolutions for the current series.
     /// Resolutions are stored in descending order, so the largest resolution is first and the smallest resolution is last.
     fn get_resolution_count(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(
-            self.instance_ref(),
-            "getResolutionCount",
-            InvocationArg::empty(),
-        )?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getResolutionCount")
     }
 
     /// Gets the number of series in this file.
     fn get_series_count(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(
-            self.instance_ref(),
-            "getSeriesCount",
-            InvocationArg::empty(),
-        )?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getSeriesCount")
     }
 
     /// Gets the size of the X dimension.
     fn get_size_x(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "getSizeX", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getSizeX")
     }
 
     /// Gets the size of the Y dimension.
     fn get_size_y(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "getSizeY", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getSizeY")
     }
 
     /// Gets the size of the Z dimension.
     fn get_size_z(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "getSizeZ", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getSizeZ")
     }
 
     /// Gets the size of the C/Channel dimension.
     fn get_size_c(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "getSizeC", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getSizeC")
     }
 
     /// Gets the size of the T/Time dimension.
     fn get_size_t(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "getSizeT", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getSizeT")
     }
 
     /// Get the size of the X dimension for the thumbnail
     fn get_thumb_size_x(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "getThumbSizeX", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getThumbSizeX")
     }
 
     /// Get the size of the Y dimension for the thumbnail
     fn get_thumb_size_y(&self) -> Result<i32, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "getThumbSizeY", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "getThumbSizeY")
     }
 
     /// Gets whether the image planes are indexed color.
     fn is_indexed(&self) -> Result<bool, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "isIndexed", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "isIndexed")
     }
 
     /// Checks if the image planes in the file have more than one channel per `open_bytes` call.
     /// This method returns true if and only if getRGBChannelCount() returns a value greater than 1.
     fn is_rgb(&self) -> Result<bool, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(self.instance_ref(), "isRGB", InvocationArg::empty())?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "isRGB")
     }
 
     /// Gets whether the current series is a lower resolution copy of a different series
     fn is_thumbnail_series(&self) -> Result<bool, BindingError> {
-        let jvm = self.borrow();
-        let res = jvm.invoke(
-            self.instance_ref(),
-            "isThumbnailSeries",
-            InvocationArg::empty(),
-        )?;
-        Ok(jvm.to_rust(res)?)
+        call_no_args(self, "isThumbnailSeries")
     }
 
     /// Gets the rasterized index corresponding to the given Z, C and T coordinates (real sizes).
