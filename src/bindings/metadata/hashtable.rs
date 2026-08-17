@@ -23,7 +23,7 @@ impl<J: Borrow<Jvm>> Metadata<J> {
     pub fn get<T: DeserializeOwned + 'static>(&self, key: &str) -> Result<Option<T>, BindingError> {
         let jvm = self.jvm.borrow();
         let res = jvm.invoke(&self.inner, "get", &[InvocationArg::try_from(key)?])?;
-        if is_null(self.jvm.borrow(), &res)? {
+        if is_null(jvm, &res)? {
             Ok(None)
         } else {
             let res: T = jvm.to_rust(res)?;
