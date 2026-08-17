@@ -1,92 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786966757390,
+  "lastUpdate": 1786966801648,
   "repoUrl": "https://github.com/AzHicham/bioformats-rs",
   "entries": {
     "bioformats-rs Benchmark": [
-      {
-        "commit": {
-          "author": {
-            "email": "hicham.azimani1@gmail.com",
-            "name": "Hicham Azimani",
-            "username": "AzHicham"
-          },
-          "committer": {
-            "email": "noreply@github.com",
-            "name": "GitHub",
-            "username": "web-flow"
-          },
-          "distinct": true,
-          "id": "6c4c8de1e3ccd2312490c9c0e8cefaf9b8224f08",
-          "message": "chore: simplify deps (#44)",
-          "timestamp": "2025-08-22T16:25:00+02:00",
-          "tree_id": "32370310077596392e5652341d5e0fedf8ac5bbd",
-          "url": "https://github.com/AzHicham/bioformats-rs/commit/6c4c8de1e3ccd2312490c9c0e8cefaf9b8224f08"
-        },
-        "date": 1755872879241,
-        "tool": "cargo",
-        "benches": [
-          {
-            "name": "bioformats_read_image_256",
-            "value": 5115982,
-            "range": "± 349730",
-            "unit": "ns/iter"
-          },
-          {
-            "name": "bioformats_read_image_512",
-            "value": 11177920,
-            "range": "± 379572",
-            "unit": "ns/iter"
-          },
-          {
-            "name": "bioformats_read_region_256",
-            "value": 4901469,
-            "range": "± 132403",
-            "unit": "ns/iter"
-          },
-          {
-            "name": "bioformats_read_region_512",
-            "value": 10748952,
-            "range": "± 158854",
-            "unit": "ns/iter"
-          },
-          {
-            "name": "deepzoom_read_image_256",
-            "value": 4910782,
-            "range": "± 58644",
-            "unit": "ns/iter"
-          },
-          {
-            "name": "deepzoom_read_image_256_arc",
-            "value": 4904268,
-            "range": "± 45183",
-            "unit": "ns/iter"
-          },
-          {
-            "name": "deepzoom_read_image_256_recreate_dz",
-            "value": 4916019,
-            "range": "± 237200",
-            "unit": "ns/iter"
-          },
-          {
-            "name": "deepzoom_read_image_512",
-            "value": 11072744,
-            "range": "± 109308",
-            "unit": "ns/iter"
-          },
-          {
-            "name": "deepzoom_read_image_512_arc",
-            "value": 11074890,
-            "range": "± 604860",
-            "unit": "ns/iter"
-          },
-          {
-            "name": "deepzoom_read_image_512_recreate_dz",
-            "value": 11070553,
-            "range": "± 112657",
-            "unit": "ns/iter"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -2519,6 +2435,90 @@ window.BENCHMARK_DATA = {
             "name": "deepzoom_read_image_512_recreate_dz",
             "value": 8517463,
             "range": "± 478743",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "29139614+renovate[bot]@users.noreply.github.com",
+            "name": "renovate[bot]",
+            "username": "renovate[bot]"
+          },
+          "committer": {
+            "email": "hicham.azimani-ext@wearewaiv.com",
+            "name": "Hicham Azimani",
+            "username": "AzHicham"
+          },
+          "distinct": true,
+          "id": "fce809880ccb7cad73b6e3bab6ba528597c0290f",
+          "message": "chore(deps): update pre-commit hook pre-commit/pre-commit to v4.6.2",
+          "timestamp": "2026-08-17T13:35:20+02:00",
+          "tree_id": "02c95ffb72cf34f63675d0718d578e4683095036",
+          "url": "https://github.com/AzHicham/bioformats-rs/commit/fce809880ccb7cad73b6e3bab6ba528597c0290f"
+        },
+        "date": 1786966800608,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bioformats_read_image_256",
+            "value": 5682896,
+            "range": "± 3904207",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bioformats_read_image_512",
+            "value": 11421463,
+            "range": "± 1797777",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bioformats_read_region_256",
+            "value": 4975159,
+            "range": "± 1056776",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bioformats_read_region_512",
+            "value": 10886669,
+            "range": "± 2197685",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_256",
+            "value": 5001308,
+            "range": "± 1246083",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_256_arc",
+            "value": 5005853,
+            "range": "± 1140913",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_256_recreate_dz",
+            "value": 5021731,
+            "range": "± 1389804",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_512",
+            "value": 11238619,
+            "range": "± 2481185",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_512_arc",
+            "value": 11169892,
+            "range": "± 908931",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "deepzoom_read_image_512_recreate_dz",
+            "value": 11186709,
+            "range": "± 2853633",
             "unit": "ns/iter"
           }
         ]
