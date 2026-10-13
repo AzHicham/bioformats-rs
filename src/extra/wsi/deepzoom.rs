@@ -100,7 +100,7 @@ impl<I: FormatReader, B: Borrow<BioformatsSlide<I>>> DeepZoomGenerator<I, B> {
             tile_size,
             l0_offset,
             level_dimensions,
-            slide_level_dimensions: slide_level_dimensions.clone(),
+            slide_level_dimensions,
             level_tiles,
             level_count,
             slide_from_dz_level,

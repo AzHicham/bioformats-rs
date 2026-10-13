@@ -143,6 +143,16 @@ impl<T: FormatReader> BioformatsSlide<T> {
         )?)
     }
 
+    /// Same as [`BioformatsSlide::read_region`] but returns the raw pixel buffer
+    /// as `u8` instead of `i8`.
+    ///
+    /// This is a zero-copy reinterpretation of the underlying bytes (no extra
+    /// allocation), which is convenient when feeding the buffer into APIs that
+    /// expect unsigned bytes.
+    pub fn read_region_u8(&self, region: &Region) -> Result<Vec<u8>, WSIError> {
+        Ok(vec_i8_into_u8(self.read_region(region)?))
+    }
+
     /// Copy pixel data from a whole slide image.
     ///
     /// This function reads and decompresses a region of a whole slide image into a `DynamicImage`
@@ -257,16 +267,15 @@ fn compute_all_level_dimensions<T: FormatReader>(reader: &T) -> Result<Vec<Size>
 }
 
 fn compute_all_level_downsamples(level_dimensions: &[Size]) -> Vec<f64> {
-    let nb_level = level_dimensions.len();
-    let dim_0 = level_dimensions.first().expect("");
-    let mut downsamples = Vec::with_capacity(nb_level);
-    for level in 0..nb_level {
-        let dim = level_dimensions.get(level).expect("");
-        downsamples.push(
-            (f64::from(dim_0.w) / f64::from(dim.w)).min(f64::from(dim_0.h) / f64::from(dim.h)),
-        );
-    }
-    downsamples
+    let Some(dim_0) = level_dimensions.first() else {
+        return Vec::new();
+    };
+    level_dimensions
+        .iter()
+        .map(|dim| {
+            (f64::from(dim_0.w) / f64::from(dim.w)).min(f64::from(dim_0.h) / f64::from(dim.h))
+        })
+        .collect()
 }
 
 #[cfg(test)]

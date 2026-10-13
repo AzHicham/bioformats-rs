@@ -1,6 +1,20 @@
 use crate::bindings::{error::BindingError, utils::is_null};
 use j4rs::{Instance, InvocationArg, Jvm};
+use serde::de::DeserializeOwned;
 use std::borrow::Borrow;
+
+/// Deserializes a Java result into `Some(value)`, or returns `None` when the
+/// underlying Java reference is `null`.
+fn nullable<T: DeserializeOwned + 'static>(
+    jvm: &Jvm,
+    instance: Instance,
+) -> Result<Option<T>, BindingError> {
+    if is_null(jvm, &instance)? {
+        Ok(None)
+    } else {
+        Ok(Some(jvm.to_rust(instance)?))
+    }
+}
 
 pub struct OmeXmlMetadata<J: Borrow<Jvm>> {
     jvm: J,
@@ -52,59 +66,19 @@ impl<J: Borrow<Jvm>> OmeXmlMetadata<J> {
     }
 
     pub fn get_microscope_manufacturer(&self, image: i32) -> Result<Option<String>, BindingError> {
-        let jvm = self.jvm.borrow();
-        let res = jvm.invoke(
-            &self.inner,
-            "getMicroscopeManufacturer",
-            &[InvocationArg::try_from(image)?.into_primitive()?],
-        )?;
-        if is_null(jvm, &res)? {
-            Ok(None)
-        } else {
-            Ok(Some(jvm.to_rust(res)?))
-        }
+        self.invoke_image("getMicroscopeManufacturer", image)
     }
 
     pub fn get_microscope_model(&self, image: i32) -> Result<Option<String>, BindingError> {
-        let jvm = self.jvm.borrow();
-        let res = jvm.invoke(
-            &self.inner,
-            "getMicroscopeModel",
-            &[InvocationArg::try_from(image)?.into_primitive()?],
-        )?;
-        if is_null(jvm, &res)? {
-            Ok(None)
-        } else {
-            Ok(Some(jvm.to_rust(res)?))
-        }
+        self.invoke_image("getMicroscopeModel", image)
     }
 
     pub fn get_microscope_serial_number(&self, image: i32) -> Result<Option<String>, BindingError> {
-        let jvm = self.jvm.borrow();
-        let res = jvm.invoke(
-            &self.inner,
-            "getMicroscopeSerialNumber",
-            &[InvocationArg::try_from(image)?.into_primitive()?],
-        )?;
-        if is_null(jvm, &res)? {
-            Ok(None)
-        } else {
-            Ok(Some(jvm.to_rust(res)?))
-        }
+        self.invoke_image("getMicroscopeSerialNumber", image)
     }
 
     pub fn get_detector_count(&self, image: i32) -> Result<Option<i32>, BindingError> {
-        let jvm = self.jvm.borrow();
-        let res = jvm.invoke(
-            &self.inner,
-            "getDetectorCount",
-            &[InvocationArg::try_from(image)?.into_primitive()?],
-        )?;
-        if is_null(jvm, &res)? {
-            Ok(None)
-        } else {
-            Ok(Some(jvm.to_rust(res)?))
-        }
+        self.invoke_image("getDetectorCount", image)
     }
 
     pub fn get_detector_serial_number(
@@ -112,20 +86,7 @@ impl<J: Borrow<Jvm>> OmeXmlMetadata<J> {
         image: i32,
         detector: i32,
     ) -> Result<Option<String>, BindingError> {
-        let jvm = self.jvm.borrow();
-        let res = jvm.invoke(
-            &self.inner,
-            "getDetectorSerialNumber",
-            &[
-                InvocationArg::try_from(image)?.into_primitive()?,
-                InvocationArg::try_from(detector)?.into_primitive()?,
-            ],
-        )?;
-        if is_null(jvm, &res)? {
-            Ok(None)
-        } else {
-            Ok(Some(jvm.to_rust(res)?))
-        }
+        self.invoke_image_detector("getDetectorSerialNumber", image, detector)
     }
 
     pub fn get_detector_model(
@@ -133,20 +94,7 @@ impl<J: Borrow<Jvm>> OmeXmlMetadata<J> {
         image: i32,
         detector: i32,
     ) -> Result<Option<String>, BindingError> {
-        let jvm = self.jvm.borrow();
-        let res = jvm.invoke(
-            &self.inner,
-            "getDetectorModel",
-            &[
-                InvocationArg::try_from(image)?.into_primitive()?,
-                InvocationArg::try_from(detector)?.into_primitive()?,
-            ],
-        )?;
-        if is_null(jvm, &res)? {
-            Ok(None)
-        } else {
-            Ok(Some(jvm.to_rust(res)?))
-        }
+        self.invoke_image_detector("getDetectorModel", image, detector)
     }
 
     pub fn get_detector_manufacturer(
@@ -154,20 +102,43 @@ impl<J: Borrow<Jvm>> OmeXmlMetadata<J> {
         image: i32,
         detector: i32,
     ) -> Result<Option<String>, BindingError> {
+        self.invoke_image_detector("getDetectorManufacturer", image, detector)
+    }
+
+    /// Invokes a Java getter taking a single `image` index and deserializes the
+    /// nullable result.
+    fn invoke_image<T: DeserializeOwned + 'static>(
+        &self,
+        method: &str,
+        image: i32,
+    ) -> Result<Option<T>, BindingError> {
         let jvm = self.jvm.borrow();
         let res = jvm.invoke(
             &self.inner,
-            "getDetectorManufacturer",
+            method,
+            &[InvocationArg::try_from(image)?.into_primitive()?],
+        )?;
+        nullable(jvm, res)
+    }
+
+    /// Invokes a Java getter taking `image` and `detector` indices and
+    /// deserializes the nullable result.
+    fn invoke_image_detector<T: DeserializeOwned + 'static>(
+        &self,
+        method: &str,
+        image: i32,
+        detector: i32,
+    ) -> Result<Option<T>, BindingError> {
+        let jvm = self.jvm.borrow();
+        let res = jvm.invoke(
+            &self.inner,
+            method,
             &[
                 InvocationArg::try_from(image)?.into_primitive()?,
                 InvocationArg::try_from(detector)?.into_primitive()?,
             ],
         )?;
-        if is_null(jvm, &res)? {
-            Ok(None)
-        } else {
-            Ok(Some(jvm.to_rust(res)?))
-        }
+        nullable(jvm, res)
     }
 
     // TODO: Impl more methods here is the full list:
