@@ -119,7 +119,7 @@ pub(crate) fn planar_to_interleaved_rgb(image: RgbImage) -> RgbImage {
     let mut inter_image = RgbImage::new(image.width(), image.height());
     let size = image.width() * image.height();
     for i in 0..size as usize {
-        inter_image.as_mut()[i * 3] = image.as_ref()[i + 0 * w * h];
+        inter_image.as_mut()[i * 3] = image.as_ref()[i];
         inter_image.as_mut()[i * 3 + 1] = image.as_ref()[i + w * h];
         inter_image.as_mut()[i * 3 + 2] = image.as_ref()[i + 2 * w * h];
     }
@@ -132,7 +132,7 @@ pub(crate) fn planar_to_interleaved_rgba(image: RgbaImage) -> RgbaImage {
     let mut inter_image = RgbaImage::new(image.width(), image.height());
     let size = image.width() * image.height();
     for i in 0..size as usize {
-        inter_image.as_mut()[i * 4] = image.as_ref()[i + 0 * w * h];
+        inter_image.as_mut()[i * 4] = image.as_ref()[i];
         inter_image.as_mut()[i * 4 + 1] = image.as_ref()[i + w * h];
         inter_image.as_mut()[i * 4 + 2] = image.as_ref()[i + 2 * w * h];
         inter_image.as_mut()[i * 4 + 3] = image.as_ref()[i + 3 * w * h];
